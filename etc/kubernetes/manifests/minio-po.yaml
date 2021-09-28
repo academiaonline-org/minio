@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: minio-po
+  labels:
+    app: minio
+spec:
+  containers:
+    -
+      args:
+        - minio
+        - -S
+        - /etc/minio/certs/
+        - server
+        - /export
+        - --console-address
+        - :31000
+      command:
+        - docker-entrypoint.sh
+      env:
+        -
+          name: MINIO_ACCESS_KEY
+          value: myminio
+        -
+          name: MINIO_SECRET_KEY
+          value: myminio123
+      image: minio/minio:latest
+      name: minio-container
+      ports:
+        -
+          containerPort: 9000
+          protocol: TCP
+        -
+          containerPort: 31000
+          protocol: TCP
+      volumeMounts:
+        -
+          mountPath: /data/
+          name: minio-volume
+          readOnly: false
+  volumes:      
+    -
+      emptyDir: {}
+      name: minio-volume
